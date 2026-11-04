@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>OpenCode Browser Automation Research</title>
+  <meta name="description" content="Analysis of OpenCode&#39;s capability to integrate with LLMs for local browser operations, with technical solutions and implementation suggestions">
+  <meta property="og:title" content="OpenCode Browser Automation Research">
+  <meta property="og:description" content="Analysis of OpenCode&#39;s capability to integrate with LLMs for local browser operations, with technical solutions and implementation suggestions">
+  <link rel="stylesheet" href="../../assets/share.css">
+  <script src="../../assets/share.js" defer></script>
+</head>
+<body>
+  <main class="page">
+    <header class="meta">
+      <h1>OpenCode Browser Automation Research</h1>
+      <p><time datetime="2026-11-04">2026-11-04</time> </p>
+      <p class="lede">Analysis of OpenCode&#39;s capability to integrate with LLMs for local browser operations, with technical solutions and implementation suggestions</p>
+    </header>
+
+    <h1>OpenCode Browser Automation Research</h1>
+<h2>Research Background</h2>
+<p>The user wants to know if OpenCode can integrate with large language models to directly operate the local browser, and publish the research results via <code>gh share</code> as public notes.</p>
+<h2>Environment Detection Results</h2>
+<h3>System Environment</h3>
+<ul>
+<li><strong>Operating System</strong>: Linux</li>
+<li><strong>Working Directory</strong>: <code>/home/jw/Projects</code></li>
+<li><strong>Git Repository</strong>: Current directory is not a git repository</li>
+</ul>
+<h3>Browser Automation Tools Detection</h3>
+<p>Available tools detected:</p>
+<ol>
+<li><strong>Node.js</strong>: ✓ Installed (v26.12.0)</li>
+<li><strong>Puppeteer</strong>: ✗ Not installed (globally)</li>
+<li><strong>Playwright</strong>: ✗ Not installed (globally)</li>
+<li><strong>Browser</strong>: ✓ Chromium available (<code>/usr/bin/chromium</code>)</li>
+<li><strong>Python3</strong>: ✓ Installed (Python 3.14.8)</li>
+</ol>
+<h2>OpenCode Capabilities Analysis</h2>
+<h3>OpenCode Core Capabilities</h3>
+<p>According to OpenCode skill documentation, OpenCode mainly provides:</p>
+<ol>
+<li><strong>Configuration Management</strong>: JSON/JSONC config file support</li>
+<li><strong>MCP Servers</strong>: Configurable external servers</li>
+<li><strong>Plugin System</strong>: Extensible functionality</li>
+<li><strong>API Interface</strong>: HTTP API and TypeScript client</li>
+<li><strong>Session Management</strong>: Multi-session support</li>
+<li><strong>Tool Execution</strong>: Extended capabilities via plugins and tools</li>
+</ol>
+<h3>Possibility of Direct Browser Operation in OpenCode</h3>
+<h4>1. Native Support</h4>
+<p>OpenCode itself <strong>does not directly provide</strong> browser automation functionality. Core features include:</p>
+<ul>
+<li>AI conversation management</li>
+<li>Filesystem operations</li>
+<li>Code editing</li>
+<li>Terminal command execution</li>
+<li>Configuration management</li>
+</ul>
+<h4>2. Extension via Plugins</h4>
+<p>OpenCode has a <strong>plugin system</strong>, theoretically allowing browser operation plugins:</p>
+<ul>
+<li>Can create custom plugins</li>
+<li>Plugins can add new tools</li>
+<li>Requires self-development</li>
+</ul>
+<h4>3. Via MCP Servers</h4>
+<p>Can integrate browser automation through MCP (Model Context Protocol) servers:</p>
+<ul>
+<li>Configure external MCP servers</li>
+<li>Servers can provide browser operation tools</li>
+<li>OpenCode calls these tools via MCP</li>
+</ul>
+<h4>4. Via Existing Tool Calls</h4>
+<p>Can indirectly operate browsers through existing shell tools:</p>
+<ul>
+<li>Use <code>shell</code> tool to call Node.js scripts</li>
+<li>Scripts using Puppeteer/Playwright</li>
+<li>Requires manual dependency installation</li>
+</ul>
+<h2>Implementation Solutions</h2>
+<h3>Solution 1: Install Browser Automation Libraries (Recommended)</h3>
+<pre><code class="language-bash"># Install Puppeteer
+npm install puppeteer
+
+# Or install Playwright
+npm install playwright
+</code></pre>
+<p>Then call via scripts in OpenCode:</p>
+<pre><code class="language-javascript">// Example: Open webpage with Puppeteer
+const puppeteer = require('puppeteer');
+
+async function openBrowser() {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto('https://example.com');
+  // Other operations...
+  await browser.close();
+}
+</code></pre>
+<h3>Solution 2: Create OpenCode Plugin</h3>
+<p>Create custom plugin providing browser operation tools:</p>
+<pre><code class="language-typescript">// Plugin example
+export const browserPlugin: OpenCodePlugin = {
+  name: 'browser-automation',
+  tools: [
+    {
+      name: 'open_browser',
+      description: 'Open browser and navigate to specified URL',
+      // Implementation details...
+    }
+  ]
+};
+</code></pre>
+<h3>Solution 3: Configure MCP Server</h3>
+<p>Find or create browser automation MCP server:</p>
+<pre><code class="language-json">{
+  &quot;mcp&quot;: {
+    &quot;servers&quot;: {
+      &quot;browser-automation&quot;: {
+        &quot;command&quot;: &quot;node&quot;,
+        &quot;args&quot;: [&quot;browser-mcp-server.js&quot;],
+        &quot;env&quot;: {}
+      }
+    }
+  }
+}
+</code></pre>
+<h2>Limitations and Considerations</h2>
+<h3>Technical Limitations</h3>
+<ol>
+<li><strong>Browser Dependency</strong>: Requires local browser installation</li>
+<li><strong>Permission Issues</strong>: May need additional system permissions</li>
+<li><strong>Resource Consumption</strong>: Browser instances consume memory</li>
+<li><strong>Stability</strong>: Automation scripts may be unstable</li>
+</ol>
+<h3>OpenCode Limitations</h3>
+<ol>
+<li><strong>No Native Support</strong>: Requires additional configuration</li>
+<li><strong>Plugin Development</strong>: Requires development skills</li>
+<li><strong>MCP Learning Curve</strong>: Need to understand MCP protocol</li>
+</ol>
+<h3>Security Considerations</h3>
+<ol>
+<li><strong>Browser Permissions</strong>: Automation scripts have broad permissions</li>
+<li><strong>Data Security</strong>: Be cautious of sensitive information leakage</li>
+<li><strong>Resource Access</strong>: Control accessible website scope</li>
+</ol>
+<h2>Conclusion</h2>
+<h3>Feasibility Assessment</h3>
+<ul>
+<li><strong>Direct Support</strong>: ❌ OpenCode does not natively support browser operations</li>
+<li><strong>Indirect Implementation</strong>: ✅ Can be achieved via plugins, MCP servers, or script calls</li>
+<li><strong>Complexity</strong>: Medium (requires additional configuration and development)</li>
+</ul>
+<h3>Recommended Path</h3>
+<p>For simple use cases, recommend:</p>
+<ol>
+<li><strong>Install Puppeteer</strong> or Playwright</li>
+<li><strong>Create Node.js scripts</strong> for browser operations</li>
+<li><strong>Call via OpenCode's <code>shell</code> tool</strong></li>
+<li><strong>Gradually encapsulate</strong> into more usable tools</li>
+</ol>
+<p>For complex requirements, recommend:</p>
+<ol>
+<li><strong>Develop OpenCode plugin</strong> providing specialized browser tools</li>
+<li>Or <strong>configure browser automation MCP server</strong></li>
+<li><strong>Integrate into workflow</strong></li>
+</ol>
+<h3>Next Steps</h3>
+<ol>
+<li>Install necessary dependencies: <code>npm install puppeteer</code></li>
+<li>Create simple browser operation scripts</li>
+<li>Test calling in OpenCode</li>
+<li>Encapsulate as tools or plugins based on requirements</li>
+</ol>
+<hr>
+<p><em>Research Time: November 4, 2026</em><br>
+<em>Environment: Linux, OpenCode V2, Chromium available</em></p>
+
+
+    <footer>shared via <a href="https://jianwwpro.github.io/share/">gh-share</a></footer>
+  </main>
+</body>
+</html>
