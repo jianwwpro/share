@@ -4,32 +4,46 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <title>OpenCode Browser Automation Research</title>
+  <title>OpenCode Browser Automation Research - OpenCode 浏览器自动化研究</title>
   <meta name="description" content="Analysis of OpenCode&#39;s capability to integrate with LLMs for local browser operations, with technical solutions and implementation suggestions">
   <meta property="og:title" content="OpenCode Browser Automation Research">
   <meta property="og:description" content="Analysis of OpenCode&#39;s capability to integrate with LLMs for local browser operations, with technical solutions and implementation suggestions">
   <link rel="stylesheet" href="../../assets/share.css">
   <script src="../../assets/share.js" defer></script>
+
+    <style>
+    .translation {
+        color: #666;
+        font-size: 0.9em;
+        margin-top: 0.2em;
+        line-height: 1.4;
+    }
+    h1 small, h2 small, h3 small {
+        display: block;
+        margin-top: 0.2em;
+    }
+    </style>
+    
 </head>
 <body>
   <main class="page">
     <header class="meta">
-      <h1>OpenCode Browser Automation Research</h1>
+      <h1>OpenCode Browser Automation Research<br><small style="color: #666; font-weight: normal;">OpenCode 浏览器自动化研究</small></h1>
       <p><time datetime="2026-11-04">2026-11-04</time> </p>
       <p class="lede">Analysis of OpenCode&#39;s capability to integrate with LLMs for local browser operations, with technical solutions and implementation suggestions</p>
     </header>
 
-    <h1>OpenCode Browser Automation Research</h1>
-<h2>Research Background</h2>
-<p>The user wants to know if OpenCode can integrate with large language models to directly operate the local browser, and publish the research results via <code>gh share</code> as public notes.</p>
-<h2>Environment Detection Results</h2>
-<h3>System Environment</h3>
+    <h1>OpenCode Browser Automation Research<br><small style="color: #666; font-weight: normal;">OpenCode 浏览器自动化研究</small></h1>
+<h2>Research Background<br><small style="color: #666; font-weight: normal;">研究背景</small></h2>
+<p>The user wants to know if OpenCode can integrate with large language models to directly operate the local browser, and publish the research results via <code>gh share</code> as public notes.<br><span style="color: #666;">用户想知道 OpenCode 是否可以结合大语言模型直接操作本地浏览器，并将调研结果通过 <code>gh share</code> 发布为公开笔记。</span></p>
+<h2>Environment Detection Results<br><small style="color: #666; font-weight: normal;">环境检测结果</small></h2>
+<h3>System Environment<br><small style="color: #666; font-weight: normal;">系统环境</small></h3>
 <ul>
-<li><strong>Operating System</strong>: Linux</li>
-<li><strong>Working Directory</strong>: <code>/home/jw/Projects</code></li>
-<li><strong>Git Repository</strong>: Current directory is not a git repository</li>
+<li><strong>Operating System</strong>: Linux<br><span style="color: #666;"><strong>操作系统</strong>: Linux</span></li>
+<li><strong>Working Directory</strong>: <code>/home/jw/Projects</code><br><span style="color: #666;"><strong>工作目录</strong>: <code>/home/jw/Projects</code></span></li>
+<li><strong>Git Repository</strong>: Current directory is not a git repository<br><span style="color: #666;"><strong>Git 仓库</strong>: 当前目录不是 git 仓库</span></li>
 </ul>
-<h3>Browser Automation Tools Detection</h3>
+<h3>Browser Automation Tools Detection<br><small style="color: #666; font-weight: normal;">浏览器自动化工具检测</small></h3>
 <p>Available tools detected:</p>
 <ol>
 <li><strong>Node.js</strong>: ✓ Installed (v26.12.0)</li>
@@ -38,9 +52,9 @@
 <li><strong>Browser</strong>: ✓ Chromium available (<code>/usr/bin/chromium</code>)</li>
 <li><strong>Python3</strong>: ✓ Installed (Python 3.14.8)</li>
 </ol>
-<h2>OpenCode Capabilities Analysis</h2>
-<h3>OpenCode Core Capabilities</h3>
-<p>According to OpenCode skill documentation, OpenCode mainly provides:</p>
+<h2>OpenCode Capabilities Analysis<br><small style="color: #666; font-weight: normal;">OpenCode 能力分析</small></h2>
+<h3>OpenCode Core Capabilities<br><small style="color: #666; font-weight: normal;">OpenCode 核心能力</small></h3>
+<p>According to OpenCode skill documentation, OpenCode mainly provides:<br><span style="color: #666;">根据 OpenCode 技能文档，OpenCode 主要提供：</span></p>
 <ol>
 <li><strong>Configuration Management</strong>: JSON/JSONC config file support</li>
 <li><strong>MCP Servers</strong>: Configurable external servers</li>
@@ -49,7 +63,7 @@
 <li><strong>Session Management</strong>: Multi-session support</li>
 <li><strong>Tool Execution</strong>: Extended capabilities via plugins and tools</li>
 </ol>
-<h3>Possibility of Direct Browser Operation in OpenCode</h3>
+<h3>Possibility of Direct Browser Operation in OpenCode<br><small style="color: #666; font-weight: normal;">OpenCode 直接操作浏览器的可能性</small></h3>
 <h4>1. Native Support</h4>
 <p>OpenCode itself <strong>does not directly provide</strong> browser automation functionality. Core features include:</p>
 <ul>
@@ -67,20 +81,20 @@
 <li>Requires self-development</li>
 </ul>
 <h4>3. Via MCP Servers</h4>
-<p>Can integrate browser automation through MCP (Model Context Protocol) servers:</p>
+<p>Can integrate browser automation through MCP (Model Context Protocol) servers:<br><span style="color: #666;">可通过 MCP (Model Context Protocol) 服务器集成浏览器自动化：</span></p>
 <ul>
 <li>Configure external MCP servers</li>
 <li>Servers can provide browser operation tools</li>
 <li>OpenCode calls these tools via MCP</li>
 </ul>
 <h4>4. Via Existing Tool Calls</h4>
-<p>Can indirectly operate browsers through existing shell tools:</p>
+<p>Can indirectly operate browsers through existing shell tools:<br><span style="color: #666;">可通过现有的 shell 工具间接操作浏览器：</span></p>
 <ul>
 <li>Use <code>shell</code> tool to call Node.js scripts</li>
 <li>Scripts using Puppeteer/Playwright</li>
 <li>Requires manual dependency installation</li>
 </ul>
-<h2>Implementation Solutions</h2>
+<h2>Implementation Solutions<br><small style="color: #666; font-weight: normal;">实现方案</small></h2>
 <h3>Solution 1: Install Browser Automation Libraries (Recommended)</h3>
 <pre><code class="language-bash"># Install Puppeteer
 npm install puppeteer
@@ -128,48 +142,48 @@ export const browserPlugin: OpenCodePlugin = {
   }
 }
 </code></pre>
-<h2>Limitations and Considerations</h2>
-<h3>Technical Limitations</h3>
+<h2>Limitations and Considerations<br><small style="color: #666; font-weight: normal;">限制和注意事项</small></h2>
+<h3>Technical Limitations<br><small style="color: #666; font-weight: normal;">技术限制</small></h3>
 <ol>
 <li><strong>Browser Dependency</strong>: Requires local browser installation</li>
 <li><strong>Permission Issues</strong>: May need additional system permissions</li>
 <li><strong>Resource Consumption</strong>: Browser instances consume memory</li>
 <li><strong>Stability</strong>: Automation scripts may be unstable</li>
 </ol>
-<h3>OpenCode Limitations</h3>
+<h3>OpenCode Limitations<br><small style="color: #666; font-weight: normal;">OpenCode 限制</small></h3>
 <ol>
 <li><strong>No Native Support</strong>: Requires additional configuration</li>
 <li><strong>Plugin Development</strong>: Requires development skills</li>
 <li><strong>MCP Learning Curve</strong>: Need to understand MCP protocol</li>
 </ol>
-<h3>Security Considerations</h3>
+<h3>Security Considerations<br><small style="color: #666; font-weight: normal;">安全考虑</small></h3>
 <ol>
 <li><strong>Browser Permissions</strong>: Automation scripts have broad permissions</li>
 <li><strong>Data Security</strong>: Be cautious of sensitive information leakage</li>
 <li><strong>Resource Access</strong>: Control accessible website scope</li>
 </ol>
-<h2>Conclusion</h2>
-<h3>Feasibility Assessment</h3>
+<h2>Conclusion<br><small style="color: #666; font-weight: normal;">结论</small></h2>
+<h3>Feasibility Assessment<br><small style="color: #666; font-weight: normal;">可行性评估</small></h3>
 <ul>
 <li><strong>Direct Support</strong>: ❌ OpenCode does not natively support browser operations</li>
 <li><strong>Indirect Implementation</strong>: ✅ Can be achieved via plugins, MCP servers, or script calls</li>
 <li><strong>Complexity</strong>: Medium (requires additional configuration and development)</li>
 </ul>
-<h3>Recommended Path</h3>
-<p>For simple use cases, recommend:</p>
+<h3>Recommended Path<br><small style="color: #666; font-weight: normal;">推荐路径</small></h3>
+<p>For simple use cases, recommend:<br><span style="color: #666;">对于简单用例，建议：</span></p>
 <ol>
 <li><strong>Install Puppeteer</strong> or Playwright</li>
 <li><strong>Create Node.js scripts</strong> for browser operations</li>
 <li><strong>Call via OpenCode's <code>shell</code> tool</strong></li>
 <li><strong>Gradually encapsulate</strong> into more usable tools</li>
 </ol>
-<p>For complex requirements, recommend:</p>
+<p>For complex requirements, recommend:<br><span style="color: #666;">对于复杂需求，建议：</span></p>
 <ol>
 <li><strong>Develop OpenCode plugin</strong> providing specialized browser tools</li>
 <li>Or <strong>configure browser automation MCP server</strong></li>
 <li><strong>Integrate into workflow</strong></li>
 </ol>
-<h3>Next Steps</h3>
+<h3>Next Steps<br><small style="color: #666; font-weight: normal;">下一步行动</small></h3>
 <ol>
 <li>Install necessary dependencies: <code>npm install puppeteer</code></li>
 <li>Create simple browser operation scripts</li>
@@ -177,8 +191,8 @@ export const browserPlugin: OpenCodePlugin = {
 <li>Encapsulate as tools or plugins based on requirements</li>
 </ol>
 <hr>
-<p><em>Research Time: November 4, 2026</em><br>
-<em>Environment: Linux, OpenCode V2, Chromium available</em></p>
+<p><em>Research Time: November 4, 2026<br><span style="color: #666;">调研时间: 2026年11月4日</span></em><br>
+<em>Environment: Linux, OpenCode V2, Chromium available<br><span style="color: #666;">环境: Linux, OpenCode V2, Chromium 可用</span></em></p>
 
 
     <footer>shared via <a href="https://jianwwpro.github.io/share/">gh-share</a></footer>
