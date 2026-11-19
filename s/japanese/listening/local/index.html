@@ -100,6 +100,9 @@
   details[open]>summary::before{transform:rotate(90deg)}
   details .body{padding:2px 14px 14px}
   .field{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .seg2{display:flex;flex:1;background:#1b2130;border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+  .seg2 button{flex:1;padding:7px 4px;border-radius:7px;font-size:12.5px;color:var(--dim);background:none;border:0;font-weight:400}
+  .seg2 button.on{background:rgba(91,140,255,.18);color:#cfdcff;font-weight:600}
   .field label{font-size:13px;color:var(--dim);min-width:76px;flex-shrink:0}
   .field output{font-size:12px;color:var(--accent);min-width:44px;text-align:right;
     font-variant-numeric:tabular-nums}
@@ -231,9 +234,22 @@
         </div>
         <div class="field">
           <label>句间停顿</label>
+          <div class="seg2" id="gapMode">
+            <button data-g="auto" class="on">跟随原句</button>
+            <button data-g="fixed">固定时长</button>
+          </div>
+        </div>
+        <div class="field" id="rowFactor">
+          <label>倍率</label>
+          <input type="range" id="factor" min="0.5" max="3" step="0.1" value="1.5" />
+          <output id="factorOut">×1.5</output>
+        </div>
+        <div class="field" id="rowGap" hidden>
+          <label>停顿时长</label>
           <input type="range" id="gap" min="0" max="8" step="0.5" value="1.5" />
           <output id="gapOut">1.5s</output>
         </div>
+        <div class="note" id="gapHint" style="margin:-2px 0 10px"></div>
         <div class="field">
           <label>循环遍数</label>
           <input type="range" id="loops" min="1" max="10" step="1" value="3" />
@@ -318,7 +334,7 @@
     file: null, url: null, dur: 0,
     bounds: [0], cues: [],
     i: 0, pending: false,
-    mode: 'pause', gap: 1.5, loops: 3, rate: 1,
+    mode: 'pause', gap: 1.5, gapMode: 'auto', gapFactor: 1.5, loops: 3, rate: 1,
     gapTick: null, loopIdx: -1, loopCount: 0,
     dbs: null, frameDur: 0.02, peaks: null,
     delta: 10, minPause: 0.30,
@@ -622,7 +638,8 @@
       S.loopCount++;
       if (S.loopCount < S.loops) {
         S.pending = true;
-        if (S.gap > 0) scheduleGap(function () { goto(S.i, true); });
+        var m1 = gapMs(SEGS[S.i]);
+        if (m1 > 0) scheduleGap(function () { goto(S.i, true); }, m1);
         else goto(S.i, true);
         return;
       }
@@ -633,15 +650,23 @@
     S.pending = true;
     if (S.mode === 'gap' || S.mode === 'loop') {
       if (S.i + 1 >= SEGS.length) { toast('已到最后一句'); syncUI(); return; }
-      if (S.gap > 0) scheduleGap(function () { goto(S.i + 1, true); });
+      var m2 = gapMs(SEGS[S.i]);
+      if (m2 > 0) scheduleGap(function () { goto(S.i + 1, true); }, m2);
       else goto(S.i + 1, true);
     }
     syncUI();
   }
 
-  function scheduleGap(fn) {
+  function gapMs(sg) {
+    if (S.gapMode === 'fixed') return Math.max(0, S.gap * 1000);
+    var d = (sg && sg.end > sg.start) ? (sg.end - sg.start) : 1.5;
+    return clamp(d * S.gapFactor, 0.4, 30) * 1000;
+  }
+
+  function scheduleGap(fn, ms) {
     clearGap();
-    var ms = S.gap * 1000, t0 = performance.now();
+    ms = Math.max(0, ms || 0);
+    var t0 = performance.now();
     gapring.classList.add('show');
     S.gapTick = setInterval(function () {
       var left = ms - (performance.now() - t0);
@@ -812,6 +837,7 @@
         listEl.scrollTop += (rr.top - lr.top) - lr.height / 2 + rr.height / 2;
       }
     }
+    updateGapHint();
     updateMeta();
   }
 
@@ -967,8 +993,44 @@
   gap.addEventListener('input', function () {
     S.gap = parseFloat(gap.value);
     gapOut.textContent = S.gap.toFixed(1) + 's';
-    saveSettings();
+    saveSettings(); updateGapHint();
   });
+
+  Array.prototype.forEach.call(document.querySelectorAll('#gapMode button'), function (b) {
+    b.addEventListener('click', function () {
+      Array.prototype.forEach.call(document.querySelectorAll('#gapMode button'), function (x) {
+        x.classList.toggle('on', x === b);
+      });
+      S.gapMode = b.dataset.g;
+      $('#rowFactor').hidden = S.gapMode !== 'auto';
+      $('#rowGap').hidden = S.gapMode !== 'fixed';
+      saveSettings(); updateGapHint();
+    });
+  });
+
+  var factor = $('#factor'), factorOut = $('#factorOut');
+  factor.addEventListener('input', function () {
+    S.gapFactor = parseFloat(factor.value);
+    factorOut.textContent = '×' + S.gapFactor.toFixed(1);
+    saveSettings(); updateGapHint();
+  });
+
+  function updateGapHint() {
+    var el = $('#gapHint');
+    if (!el) return;
+    if (S.gapMode === 'fixed') {
+      el.textContent = '固定时长：每句之间都停 ' + S.gap.toFixed(1) + ' 秒。';
+      return;
+    }
+    var sg = SEGS[S.i];
+    if (!sg || sg.end <= sg.start) {
+      el.textContent = '跟随原句：停顿时长 = 本句时长 × ' + S.gapFactor.toFixed(1) + '。';
+      return;
+    }
+    var d = sg.end - sg.start;
+    el.textContent = '跟随原句：第 ' + (S.i + 1) + ' 句 ' + d.toFixed(1) + 's × ' +
+      S.gapFactor.toFixed(1) + ' = 停 ' + (d * S.gapFactor).toFixed(1) + 's。';
+  }
 
   var loops = $('#loops'), loopsOut = $('#loopsOut');
   loops.addEventListener('input', function () {
@@ -1181,7 +1243,8 @@
   function saveSettings() {
     try {
       localStorage.setItem('shadowpro:settings', JSON.stringify({
-        mode: S.mode, gap: S.gap, loops: S.loops, rate: S.rate,
+        mode: S.mode, gap: S.gap, gapMode: S.gapMode, gapFactor: S.gapFactor,
+        loops: S.loops, rate: S.rate,
         delta: S.delta, minPause: S.minPause
       }));
     } catch (e) {}
@@ -1193,12 +1256,20 @@
     if (!o) return;
     if (o.mode) S.mode = o.mode;
     if (typeof o.gap === 'number') S.gap = o.gap;
+    if (o.gapMode === 'auto' || o.gapMode === 'fixed') S.gapMode = o.gapMode;
+    if (typeof o.gapFactor === 'number') S.gapFactor = o.gapFactor;
     if (typeof o.loops === 'number') S.loops = o.loops;
     if (typeof o.rate === 'number') S.rate = o.rate;
     if (typeof o.delta === 'number') S.delta = o.delta;
     if (typeof o.minPause === 'number') S.minPause = o.minPause;
 
     $('#gap').value = S.gap; setOut('#gapOut', S.gap.toFixed(1) + 's');
+    $('#factor').value = S.gapFactor; setOut('#factorOut', '×' + S.gapFactor.toFixed(1));
+    $('#rowFactor').hidden = S.gapMode !== 'auto';
+    $('#rowGap').hidden = S.gapMode !== 'fixed';
+    Array.prototype.forEach.call(document.querySelectorAll('#gapMode button'), function (x) {
+      x.classList.toggle('on', x.dataset.g === S.gapMode);
+    });
     $('#loops').value = S.loops; setOut('#loopsOut', S.loops + ' 遍');
     $('#rate').value = S.rate; setOut('#rateOut', S.rate.toFixed(2) + 'x');
     $('#delta').value = S.delta; setOut('#deltaOut', S.delta + 'dB');
