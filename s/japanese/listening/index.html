@@ -158,6 +158,9 @@
     <svg viewBox="0 0 24 24"><path d="M15.4 7.4 14 6l-6 6 6 6 1.4-1.4L10.8 12z"/></svg>
   </a>
   <div class="ttl"><span id="ttl">影子跟读</span><small id="sub">选择一课开始</small></div>
+  <button class="back" id="btnSet" aria-label="播放设置">
+    <svg viewBox="0 0 24 24"><path d="M19.14 12.94a7.07 7.07 0 0 0 0-1.88l2.03-1.58a.5.5 0 0 0 .12-.63l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.03 7.03 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.59.24-1.13.56-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.65 8.85a.5.5 0 0 0 .12.63l2.03 1.58a7.07 7.07 0 0 0 0 1.88l-2.03 1.58a.5.5 0 0 0-.12.63l1.92 3.32c.13.22.39.3.6.22l2.39-.96c.5.38 1.04.7 1.63.94l.36 2.54c.04.24.25.42.5.42h3.84c.25 0 .46-.18.5-.42l.36-2.54c.59-.24 1.13-.56 1.63-.94l2.39.96c.22.08.47 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.63l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"/></svg>
+  </button>
   <button class="chip" id="btnLessons">换课</button>
 </div>
 
@@ -342,7 +345,7 @@
     restore();
     S.i = 0;
     rebuild();
-    $('#sub').textContent = SEGS.length + ' 句 · 全程 ' + fmt(S.dur);
+    updateSub();
     fitCanvas();
     autoAnalyze();
   });
@@ -670,6 +673,11 @@
 
   /* ---------------- UI 同步 ---------------- */
   var SVG_PLAY = 'M8 5v14l11-7z', SVG_PAUSE = 'M6 4h4v16H6zM14 4h4v16h-4z';
+  var MODE_NAME = { pause: '句末暂停', gap: '间隔播放', loop: '单句循环', cont: '连续播放' };
+  function updateSub() {
+    if (!S.lesson || !S.dur) return;
+    $('#sub').textContent = MODE_NAME[S.mode] + ' · ' + SEGS.length + ' 句 · ' + fmt(S.dur);
+  }
   function sync() {
     var playing = !v.paused && !S.pending && !S.gapTick;
     ico.innerHTML = '<path d="' + (playing ? SVG_PAUSE : SVG_PLAY) + '"/>';
@@ -680,9 +688,7 @@
       : '—';
     $('#tCur').textContent = fmt(v.currentTime);
     $('#tDur').textContent = fmt(S.dur);
-    if (S.lesson && S.dur) {
-      $('#sub').textContent = SEGS.length + ' 句 · 全程 ' + fmt(S.dur);
-    }
+    updateSub();
     meta();
   }
 
@@ -755,6 +761,7 @@
   $('#btnLessons').addEventListener('click', function () {
     renderLessons(); openSheet($('#shLessons'));
   });
+  $('#btnSet').addEventListener('click', function () { openSheet($('#shSet')); });
   $('#bList').addEventListener('click', function () {
     renderSegs(); openSheet($('#shList'));
   });
@@ -1028,6 +1035,15 @@
   }
   if (!start || !LESSONS.some(function (x) { return x.id === start; })) start = LESSONS[0].id;
   loadLesson(start);
+
+  setTimeout(function () {
+    try {
+      if (!localStorage.getItem('shadow:hint')) {
+        localStorage.setItem('shadow:hint', '1');
+        toast('右上角 ⚙ 可切换播放模式与速度');
+      }
+    } catch (e) {}
+  }, 1600);
 })();
 </script>
 </body>
