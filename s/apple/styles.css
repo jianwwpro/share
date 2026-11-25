@@ -26,3 +26,10 @@ a:hover{text-decoration:underline}
 .nav a{font-size:14px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--card)}
 .muted{color:var(--dim);font-size:14px}
 code{background:rgba(127,127,127,.14);padding:1px 6px;border-radius:6px;font-size:14px}
+
+/* 语言切换 */
+.langs{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:20px}
+.langs a{font-size:13px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--dim);text-decoration:none;white-space:nowrap}
+.langs a:hover{text-decoration:none;color:var(--txt)}
+.langs a.on{color:var(--accent);border-color:var(--accent)}
+.langs a.home{padding:6px 10px}
